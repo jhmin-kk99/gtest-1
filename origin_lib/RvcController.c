@@ -209,6 +209,7 @@ int Cleaner_Control(int Obstacle_Location, int Dust_Existence, struct Cleaner_St
 
 //Iteration 1번 제대로 동작하는지
 void run(const char* Obstacle_file, const char* Dust_file, struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line){
+
     FILE* Obstacle_Location_File = fopen(Obstacle_file, "r");
     FILE* Dust_Exist_File = fopen(Dust_file, "r");
 
@@ -220,3 +221,6 @@ void run(const char* Obstacle_file, const char* Dust_file, struct Moter_Status *
     fclose(Obstacle_Location_File);
     fclose(Dust_Exist_File);
 }
+
+
+

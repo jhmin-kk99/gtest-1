@@ -395,13 +395,20 @@ TEST(Simulation, run_3){
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
     run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,1);
     // 011 / 0
+    EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD);
+    EXPECT_EQ(cleanerStatus.Power, POWER_ON);
     run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 6,1);
-    // 111 / 0
+    // 101 / 0
+    EXPECT_EQ(Obstacle_Location, TURN_LEFT);
+    EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
+    EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
+    EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
     run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 7,1);
     // 110 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_RIGHT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
 }
+
 int main(int argc, char **argv) {
 	    ::testing::InitGoogleTest(&argc, argv);
 	        return RUN_ALL_TESTS();
