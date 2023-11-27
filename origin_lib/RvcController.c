@@ -7,14 +7,15 @@ int Prev_Moter_Command;
 int Front_Obstacle, Left_Obstacle, Right_Obstacle;
 int Obstacle_Location;
 int Dust_Existence;
-int Moter_Command, Clean_Command;
+int Moter_Command, Cleaner_Command;
+
 
 //파일 절대경로
 const char* obstacle_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
 const char* dust_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
 
 
-
+//o
 int Front_Sensor_Interface(FILE* file, int line){
     int i, ret;
     for(i = 1; i < line; i++){
@@ -25,6 +26,7 @@ int Front_Sensor_Interface(FILE* file, int line){
     }
     return ret;
 };
+//o
 int Left_Sensor_Interface(FILE* file){
     int ret;
     if (fscanf(file, "%d", &ret) != 1) {
@@ -32,6 +34,7 @@ int Left_Sensor_Interface(FILE* file){
     }
     return ret;
 };
+//o
 int Right_Sensor_Interface(FILE* file){
     int ret;
     if (fscanf(file, "%d", &ret) != 1) {
@@ -39,6 +42,7 @@ int Right_Sensor_Interface(FILE* file){
     }
     return ret;
 };
+//o
 int Dust_Sensor_Interface(FILE* file, int line){
     int i, ret;
     for(i = 1; i < line; i++){
@@ -50,94 +54,147 @@ int Dust_Sensor_Interface(FILE* file, int line){
     return ret;
 };
 
+//o
 int Determine_Obstacle_Location(FILE *file, int line){
-//    FILE* file = fopen(obstacle_Location_file, "r");
-//    int i;
-//    if (file == NULL) {
-//        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
-//        perror("파일 열기 오류");
-//        return -1;
-//    }
-//    for(i = 1; i < line; i++){
-//        while(fgetc(file) != '\n');
-//    }
     Front_Obstacle = Front_Sensor_Interface(file, line);
     Left_Obstacle = Left_Sensor_Interface(file);
     Right_Obstacle = Right_Sensor_Interface(file);
-    //fclose(file);
+
     if(Prev_Moter_Command == MOVE_BACKWARD){
         if (!Left_Obstacle) return TURN_LEFT; // TURNLEFT
         if (Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; //TURNRIGHT
         if(Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD; // MOVEBACKWARD 유지
     } else {
-        if (!Front_Obstacle) return MOVE_FORWARD; // MOVEFORWARD 유지
+        if (!Front_Obstacle) return MOVE_FORWARD; // MOVEFORWARD 
         if (Front_Obstacle && !Left_Obstacle) return TURN_LEFT; // TURNLEFT
         if (Front_Obstacle && Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; // TURNRIGHT
         if(Front_Obstacle && Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD;  // MOVEBACKWARD
     }
 }
+//o
     int Determine_Dust_Existence(FILE* file, int line) {
-//    FILE* file = fopen(dust_Location_file, "r");
-//    if (file == NULL) {
-//        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
-//        perror("파일 열기 오류");
-//        return -1;
-//    }
     return Dust_Sensor_Interface(file, line);
 }
-void Move_Forward(int Enable_Or_Disable){};
-void Move_Backward(int Enable_Or_Disable){};
-void Turn_Left(){};
-void Turn_Right(){};
 
-void Power_On(){};
-void Power_Off(){};
-void Power_Up(){};
+void Move_Forward(int Enable_Or_Disable, struct Moter_Status *moterStatus){
+    if(Enable_Or_Disable == ENABLE) Moter_Command = MOVE_FORWARD;
+    else Moter_Command = MOVE_FORWARD_DISABLE;
+    Moter_Interface(Moter_Command, moterStatus);
+};
+void Move_Backward(int Enable_Or_Disable, struct Moter_Status *moterStatus){
+    if(Enable_Or_Disable == ENABLE) Moter_Command = MOVE_BACKWARD;
+    else Moter_Command = MOVE_BACKWARD_DISABLE;
+    Moter_Interface(Moter_Command, moterStatus);
+};
+void Turn_Left(struct Moter_Status *moterStatus){
+    Moter_Command = TURN_LEFT;
+    Moter_Interface(Moter_Command, moterStatus);
+};
+void Turn_Right(struct Moter_Status *moterStatus){
+    Moter_Command = TURN_RIGHT;
+    Moter_Interface(Moter_Command, moterStatus);
+};
 
-void Moter_Interface(int command){};
-void Clean_Interface(int command){};
+void Power_On(struct Cleaner_Status *cleanerStatus){
+    Cleaner_Command = POWER_ON;
+    Cleaner_Interface(Cleaner_Command, cleanerStatus);
+};
+void Power_Off(struct Cleaner_Status *cleanerStatus){
+    Cleaner_Command = POWER_OFF;
+    Cleaner_Interface(Cleaner_Command, cleanerStatus);
+};
+void Power_Up(struct Cleaner_Status *cleanerStatus){
+    Cleaner_Command = POWER_UP;
+    Cleaner_Interface(Cleaner_Command,cleanerStatus);
+};
 
-int Moter_Control(){
+void Moter_Interface(int command, struct Moter_Status *moterStatus){
+    switch (command) {
+        case MOVE_FORWARD:
+            moterStatus->MoveForward = MOVE_FORWARD;
+            break;
+        case MOVE_FORWARD_DISABLE:
+            moterStatus->MoveForward = MOVE_FORWARD_DISABLE;
+            break;
+        case MOVE_BACKWARD:
+            moterStatus->MoveBackward = MOVE_BACKWARD;
+            break;
+        case MOVE_BACKWARD_DISABLE:
+            moterStatus->MoveBackward = MOVE_BACKWARD_DISABLE;
+            break;
+        case TURN_LEFT:
+            moterStatus->Turn = TURN_LEFT;
+            break;
+        case TURN_RIGHT:
+            moterStatus->Turn = TURN_RIGHT;
+            break;
+    }
+};
+void Cleaner_Interface(int command, struct Cleaner_Status *cleanerStatus){
+     switch (command) {
+         case POWER_ON:
+             cleanerStatus->Power = POWER_ON;
+             break;
+         case POWER_UP:
+             cleanerStatus->Power = POWER_UP;
+             break;
+         case POWER_OFF:
+             cleanerStatus->Power = POWER_OFF;
+             break;
+     }
+};
+
+int Moter_Control(int Obstacle_Location, int Dust_Existence, struct Moter_Status *moterStatus){
     if(Dust_Existence) {
-        Move_Forward(DISABLE);
-        return MOVE_FORWARD;
+        Move_Forward(DISABLE,moterStatus);
+        Prev_Moter_Command = MOVE_FORWARD;
+        return MOVE_FORWARD_DISABLE;
     }
     switch (Obstacle_Location)
     {
         case MOVE_FORWARD:
-            Move_Forward(ENABLE);
+            Move_Forward(ENABLE, moterStatus);
+            Prev_Moter_Command = MOVE_FORWARD;
             return MOVE_FORWARD;
 
         case MOVE_BACKWARD:
-            Move_Forward(DISABLE);
-            Move_Backward(ENABLE);
+            if(Prev_Moter_Command == MOVE_FORWARD)
+            Move_Forward(DISABLE,moterStatus);
+            Move_Backward(ENABLE,moterStatus);
+            Prev_Moter_Command = MOVE_BACKWARD;
             return MOVE_BACKWARD;
 
         case TURN_LEFT:
-            if (Prev_Moter_Command == MOVE_FORWARD)
-                Move_Forward(DISABLE);
-            else if (Prev_Moter_Command == MOVE_BACKWARD)
-                Move_Backward(DISABLE);
-            Turn_Left();
+            if (Prev_Moter_Command == MOVE_FORWARD){
+                Move_Forward(DISABLE,moterStatus);
+            }
+            else if (Prev_Moter_Command == MOVE_BACKWARD){
+                Move_Backward(DISABLE, moterStatus);
+            }
+            Prev_Moter_Command = TURN_LEFT;
+            Turn_Left(moterStatus);
             return TURN_LEFT;
 
         case TURN_RIGHT:
-            if (Prev_Moter_Command == MOVE_FORWARD)
-                Move_Forward(DISABLE);
-            else if (Prev_Moter_Command == MOVE_BACKWARD)
-                Move_Backward(DISABLE);
-            Turn_Right();
+            if (Prev_Moter_Command == MOVE_FORWARD) {
+                Move_Forward(DISABLE,moterStatus);
+            }
+            else if (Prev_Moter_Command == MOVE_BACKWARD){
+                Move_Backward(DISABLE,moterStatus);
+            }
+            Prev_Moter_Command = TURN_RIGHT;
+            Turn_Right(moterStatus);
             return TURN_RIGHT;
     }
 }
 
-int Clean_Control(int Obstacle_Location, int Dust_Existence){
+int Cleaner_Control(int Obstacle_Location, int Dust_Existence, struct Cleaner_Status *cleanerStatus){
     switch (Obstacle_Location)
     {
         case MOVE_FORWARD:
-            Power_On();
+            Power_On(cleanerStatus);
             if (Dust_Existence){
-                Power_Up();
+                Power_Up(cleanerStatus);
                 return POWER_UP;
             }
             return POWER_ON;
@@ -145,23 +202,21 @@ int Clean_Control(int Obstacle_Location, int Dust_Existence){
         case MOVE_BACKWARD:
         case TURN_LEFT:
         case TURN_RIGHT:
-            Power_Off();
+            Power_Off(cleanerStatus);
             return POWER_OFF;
     }
 }
-/**
-void run(){
-    Move_Forward(ENABLE);
-    Power_On();
-    Prev_Moter_Command = MOVE_FORWARD;
-    while (1) {
-        Obstacle_Location = Determine_Obstacle_Location(1);
-        Dust_Existence = Determine_Dust_Existence(1);
-        Moter_Command = Moter_Control();
-        Moter_Interface(Moter_Command);
-        Clean_Command = Clean_Control(Obstacle_Location, Dust_Existence);
-        Clean_Interface(Clean_Command);
-        Prev_Moter_Command = Moter_Command;
-    }
+
+//Iteration 1번 제대로 동작하는지
+void run(const char* Obstacle_file, const char* Dust_file, struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line){
+    FILE* Obstacle_Location_File = fopen(Obstacle_file, "r");
+    FILE* Dust_Exist_File = fopen(Dust_file, "r");
+
+    Obstacle_Location = Determine_Obstacle_Location(Obstacle_Location_File,Obstacle_line);
+    Dust_Existence = Determine_Dust_Existence(Dust_Exist_File,Dust_line);
+    Moter_Control(Obstacle_Location, Dust_Existence, moterStatus);
+    Cleaner_Control(Obstacle_Location, Dust_Existence, cleanerStatus);
+
+    fclose(Obstacle_Location_File);
+    fclose(Dust_Exist_File);
 }
- **/
