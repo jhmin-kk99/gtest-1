@@ -1,0 +1,2 @@
+C:\CLION2~1.2\bin\mingw\bin\ar.exe qc liborigin_lib.a CMakeFiles/origin_lib.dir/RvcController.c.obj
+C:\CLION2~1.2\bin\mingw\bin\ranlib.exe liborigin_lib.a

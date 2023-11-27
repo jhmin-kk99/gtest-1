@@ -1,0 +1,2 @@
+C:\CLION2~1.2\bin\mingw\bin\ar.exe qc ..\..\..\lib\libgtest.a "CMakeFiles/gtest.dir/src/gtest-all.cc.obj"
+C:\CLION2~1.2\bin\mingw\bin\ranlib.exe ..\..\..\lib\libgtest.a

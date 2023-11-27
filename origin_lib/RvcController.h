@@ -38,7 +38,7 @@ void Power_Up();
 void Moter_Interface(int command);
 void Clean_Interface(int command);
 
-int Determine_Obstacle_Location(int line);
+int Determine_Obstacle_Location(FILE* file,int line);
 int Determine_Dust_Existence();
 int Moter_Control();
 int Clean_Control(int Obstacle_Location, int Dust_Existence);

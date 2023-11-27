@@ -9,6 +9,12 @@ int Obstacle_Location;
 int Dust_Existence;
 int Moter_Command, Clean_Command;
 
+//파일 절대경로
+const char* obstacle_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
+const char* dust_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
+
+
+
 int Front_Sensor_Interface(FILE* file, int line){
     int i, ret;
     for(i = 1; i < line; i++){
@@ -41,8 +47,44 @@ int Dust_Sensor_Interface(FILE* file, int line){
     if (fscanf(file, "%d", &ret) != 1) {
         return -1;
     }
-    return ret;};
+    return ret;
+};
 
+int Determine_Obstacle_Location(FILE *file, int line){
+//    FILE* file = fopen(obstacle_Location_file, "r");
+//    int i;
+//    if (file == NULL) {
+//        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
+//        perror("파일 열기 오류");
+//        return -1;
+//    }
+//    for(i = 1; i < line; i++){
+//        while(fgetc(file) != '\n');
+//    }
+    Front_Obstacle = Front_Sensor_Interface(file, line);
+    Left_Obstacle = Left_Sensor_Interface(file);
+    Right_Obstacle = Right_Sensor_Interface(file);
+    //fclose(file);
+    if(Prev_Moter_Command == MOVE_BACKWARD){
+        if (!Left_Obstacle) return TURN_LEFT; // TURNLEFT
+        if (Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; //TURNRIGHT
+        if(Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD; // MOVEBACKWARD 유지
+    } else {
+        if (!Front_Obstacle) return MOVE_FORWARD; // MOVEFORWARD 유지
+        if (Front_Obstacle && !Left_Obstacle) return TURN_LEFT; // TURNLEFT
+        if (Front_Obstacle && Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; // TURNRIGHT
+        if(Front_Obstacle && Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD;  // MOVEBACKWARD
+    }
+}
+    int Determine_Dust_Existence(FILE* file, int line) {
+//    FILE* file = fopen(dust_Location_file, "r");
+//    if (file == NULL) {
+//        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
+//        perror("파일 열기 오류");
+//        return -1;
+//    }
+    return Dust_Sensor_Interface(file, line);
+}
 void Move_Forward(int Enable_Or_Disable){};
 void Move_Backward(int Enable_Or_Disable){};
 void Turn_Left(){};
@@ -55,49 +97,14 @@ void Power_Up(){};
 void Moter_Interface(int command){};
 void Clean_Interface(int command){};
 
-int Determine_Obstacle_Location(int line){
-    FILE* file;
-    int i;
-    fopen("/Users/chilledpi/Documents/dev/C:C++/SoftwareEngineering/Google_tests/obstacle.txt", "r");
-    if (file == NULL) {
-        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
-        perror("파일 열기 오류");
-        return -1;
-    }
-    for(i = 1; i < line; i++){
-        while(fgetc(file) != '\n');
-    }
-    Front_Obstacle = Front_Sensor_Interface(file, line);
-    Left_Obstacle = Left_Sensor_Interface(file);
-    Right_Obstacle = Right_Sensor_Interface(file);
-    fclose(file);
-    if(Prev_Moter_Command == MOVE_BACKWARD){
-        if (!Left_Obstacle) return TURN_LEFT; // TURNLEFT
-        if (Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; //TURNRIGHT
-        if(Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD; // MOVEBACKWARD 유지
-    } else {
-        if (!Front_Obstacle) return MOVE_FORWARD; // MOVEFORWARD 유지
-        if (Front_Obstacle && !Left_Obstacle) return TURN_LEFT; // TURNLEFT
-        if (Front_Obstacle && Left_Obstacle && !Right_Obstacle) return TURN_RIGHT; // TURNRIGHT
-        if(Front_Obstacle && Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD;  // MOVEBACKWARD
-    }
-}
-int Determine_Dust_Existence(int line) {
-    FILE* file = fopen("/Users/chilledpi/Documents/dev/C:C++/SoftwareEngineering/Google_tests/dust.txt", "r");
-    if (file == NULL) {
-        // 오류 처리, 예를 들어 오류 메시지 출력 및 반환
-        perror("파일 열기 오류");
-        return -1;
-    }
-    return Dust_Sensor_Interface(file, line); }
-
 int Moter_Control(){
     if(Dust_Existence) {
         Move_Forward(DISABLE);
         return MOVE_FORWARD;
     }
     switch (Obstacle_Location)
-    { case MOVE_FORWARD:
+    {
+        case MOVE_FORWARD:
             Move_Forward(ENABLE);
             return MOVE_FORWARD;
 
@@ -142,7 +149,7 @@ int Clean_Control(int Obstacle_Location, int Dust_Existence){
             return POWER_OFF;
     }
 }
-
+/**
 void run(){
     Move_Forward(ENABLE);
     Power_On();
@@ -157,3 +164,4 @@ void run(){
         Prev_Moter_Command = Moter_Command;
     }
 }
+ **/

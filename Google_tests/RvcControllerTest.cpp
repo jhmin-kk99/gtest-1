@@ -16,8 +16,8 @@ class MyTestFixture : public ::testing::Test {
 protected:
     virtual void SetUp()
     {
-        obstacle_file = fopen("/Users/chilledpi/Documents/dev/C:C++/SoftwareEngineering/Google_tests/obstacle.txt", "r");
-        dust_file = fopen("/Users/chilledpi/Documents/dev/C:C++/SoftwareEngineering/Google_tests/dust.txt", "r");
+        obstacle_file = fopen("C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt", "r");
+        dust_file = fopen("C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt", "r");
     }
 
     virtual void TearDown() {
@@ -29,103 +29,143 @@ protected:
     FILE * dust_file;
 };
 
-TEST_F(MyTestFixture,FSI_TRUE){
-    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, 5), 1);
+TEST_F(MyTestFixture, Front_Sensor_Interface_1){
+    //전방에 장애물이 있는 경우
+    int line_num = 5;
+    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, line_num), 1);
 }
-TEST_F(MyTestFixture, FSI_FALSE){
-    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, 1), 0);
+TEST_F(MyTestFixture, Front_Sensor_Interface_2){
+    //전방에 장애물이 없는 경우
+    int line_num = 1;
+    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, line_num), 0);
 }
 
-TEST_F(MyTestFixture,FLI_TRUE){
-    Front_Sensor_Interface(obstacle_file, 3);
+TEST_F(MyTestFixture, Left_Sensor_Interface_1){
+    //좌측에 장애물이 있는 경우
+    int line_num = 3;
+    Front_Sensor_Interface(obstacle_file, line_num);
     EXPECT_EQ(Left_Sensor_Interface(obstacle_file), 1);
 }
-TEST_F(MyTestFixture,FLI_FALSE){
-    Front_Sensor_Interface(obstacle_file, 1);
+TEST_F(MyTestFixture, Left_Sensor_Interface_2){
+    //좌측에 장애물이 없는 경우
+    int line_num = 2;
+    Front_Sensor_Interface(obstacle_file, line_num);
     EXPECT_EQ(Left_Sensor_Interface(obstacle_file), 0);
 }
 
-TEST_F(MyTestFixture,TRUE){
-    Front_Sensor_Interface(obstacle_file, 2);
+TEST_F(MyTestFixture, Right_Sensor_Interface_1){
+    //우측에 장애물이 있는 경우
+    int line_num = 2;
+    Front_Sensor_Interface(obstacle_file, line_num);
     Left_Sensor_Interface(obstacle_file);
     EXPECT_EQ(Right_Sensor_Interface(obstacle_file), 1);
 }
 
-TEST_F(MyTestFixture,FALSE){
-    Front_Sensor_Interface(obstacle_file, 1);
+TEST_F(MyTestFixture,Right_Sensor_Interface_2){
+    //우측에 장애물이 없는 경우
+    int line_num = 3;
+    Front_Sensor_Interface(obstacle_file, line_num);
     Left_Sensor_Interface(obstacle_file);
     EXPECT_EQ(Right_Sensor_Interface(obstacle_file), 0);
 }
 
-TEST(DOL_MOVE_FORWARD, FFF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_1){
+    // 직진하던 중, obstacle (front, left, right) : (0, 0, 0)인 경우
+    int line_num = 1;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(1), MOVE_FORWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_FORWARD);
 }
-TEST(DOL_MOVE_FORWARD, FFT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_2){
+    // 직진하던 중, obstacle (front, left, right) : (0, 0, 1)인 경우
+    int line_num = 2;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(2), MOVE_FORWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_FORWARD);
 }
-TEST(DOL_MOVE_FORWARD, FTF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_3){
+    // 직진하던 중, obstacle (front, left, right) : (0, 1, 0)인 경우
+    int line_num = 3;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(3), MOVE_FORWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_FORWARD);
 }
-TEST(DOL_MOVE_FORWARD, FTT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_4){
+    // 직진하던 중, obstacle (front, left, right) : (0, 1, 1)인 경우
+    int line_num = 4;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(4), MOVE_FORWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_FORWARD);
 }
-TEST(DOL_MOVE_FORWARD, TFF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_5){
+    // 직진하던 중, obstacle (front, left, right) : (1, 0, 0)인 경우
+    int line_num = 5;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(5), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_FORWARD, TFT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_6){
+    // 직진하던 중, obstacle (front, left, right) : (1, 0, 1)인 경우
+    int line_num = 6;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(6), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_FORWARD, TTF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_7){
+    // 직진하던 중, obstacle (front, left, right) : (1, 1, 0)인 경우
+    int line_num = 7;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(7), TURN_RIGHT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), TURN_RIGHT);
 }
-TEST(DOL_MOVE_FORWARD, TTT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_8){
+    // 직진하던 중, obstacle (front, left, right) : (1, 1, 1)인 경우
+    int line_num = 8;
     Prev_Moter_Command = MOVE_FORWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(8), MOVE_BACKWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_BACKWARD);
 }
 
-TEST(DOL_MOVE_BACKWARD, FFF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_9){
+    // 후진하던 중, obstacle (front, left, right) : (0, 0, 0)인 경우
+    int line_num = 1;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(1), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_BACKWARD, FFT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_10){
+    // 후진하던 중, obstacle (front, left, right) : (0, 0, 1)인 경우
+    int line_num = 2;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(2), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_BACKWARD, FTF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_11){
+    // 후진하던 중, obstacle (front, left, right) : (0, 1, 0)인 경우
+    int line_num = 3;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(3), TURN_RIGHT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_RIGHT);
 }
-TEST(DOL_MOVE_BACKWARD, FTT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_12){
+    // 후진하던 중, obstacle (front, left, right) : (0, 1, 1)인 경우
+    int line_num = 4;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(4), MOVE_BACKWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), MOVE_BACKWARD);
 }
-TEST(DOL_MOVE_BACKWARD, TFF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_13){
+    // 후진하던 중, obstacle (front, left, right) : (1, 0, 0)인 경우
+    int line_num = 5;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(5), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_BACKWARD, TFT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_14){
+    // 후진하던 중, obstacle (front, left, right) : (1, 0, 1)인 경우
+    int line_num = 6;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(6), TURN_LEFT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_LEFT);
 }
-TEST(DOL_MOVE_BACKWARD, TTF){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_15){
+    // 후진하던 중, obstacle (front, left, right) : (1, 1, 0)인 경우
+    int line_num = 7;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(7), TURN_RIGHT);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_RIGHT);
 }
-TEST(DOL_MOVE_BACKWARD, TTT){
+TEST_F(MyTestFixture, Determine_Obstacle_Location_16){
+    // 후진하던 중, obstacle (front, left, right) : (1, 1, 1)인 경우
+    int line_num = 8;
     Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(8), MOVE_BACKWARD);
+    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_BACKWARD);
 }
-
-
-
-
 
 
 
