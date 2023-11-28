@@ -202,15 +202,6 @@ TEST_F(MyTestFixture, Cleaner_Interface_1){
 // POWER ON,UP,OFF 로직이 거의 같으므로 ON만 test함.
 
 
-/**
- void Move_Forward(int Enable_Or_Disable, struct Moter_Status *moterStatus){
-    int command;
-    if(Enable_Or_Disable == ENABLE) command = MOVE_FORWARD;
-    else command = MOVE_FORWARD_DISABLE;
-    Moter_Interface(command, moterStatus);
-};
-**/
-
 TEST_F(MyTestFixture, MOVE_FORWARD_1){
     struct Moter_Status moterStatus;
     Move_Forward(ENABLE,&moterStatus);
@@ -345,7 +336,22 @@ TEST_F(MyTestFixture, Cleaner_Control_3){
     EXPECT_EQ(cleanerStatus.Power,POWER_OFF);
     //Power Interface를 잘 호출하는지
 }
-TEST(Simulation, Controller_1){
+
+
+
+class MyTestFixture2 : public ::testing::Test {
+
+protected:
+    virtual void SetUp(){
+
+    }
+    virtual void TearDown() {
+
+    }
+};
+
+
+TEST_F(MyTestFixture2, Controller_1){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
@@ -357,7 +363,7 @@ TEST(Simulation, Controller_1){
 
 }
 
-TEST(Simulation, run_2){
+TEST_F(MyTestFixture2, run_2){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
@@ -376,7 +382,7 @@ TEST(Simulation, run_2){
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
 
 }
-TEST(Simulation, run_3){
+TEST_F(MyTestFixture2, run_3){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";

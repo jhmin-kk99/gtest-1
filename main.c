@@ -8,7 +8,7 @@ extern int Dust_Existence;
 extern int Moter_Command, Cleaner_Command;
 
 int main() {
-    //파일 절대경로
+    //파일 절대경로 -> 수정해야 함 (절대경로)
     const char* obstacle_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
     const char* dust_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
 

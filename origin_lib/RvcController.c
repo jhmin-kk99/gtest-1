@@ -10,7 +10,7 @@ int Dust_Existence;
 int Moter_Command, Cleaner_Command;
 
 
-//o
+
 int Front_Sensor_Interface(FILE* file, int line){
     int i, ret;
     for(i = 1; i < line; i++){
@@ -21,7 +21,7 @@ int Front_Sensor_Interface(FILE* file, int line){
     }
     return ret;
 };
-//o
+
 int Left_Sensor_Interface(FILE* file){
     int ret;
     if (fscanf(file, "%d", &ret) != 1) {
@@ -29,7 +29,7 @@ int Left_Sensor_Interface(FILE* file){
     }
     return ret;
 };
-//o
+
 int Right_Sensor_Interface(FILE* file){
     int ret;
     if (fscanf(file, "%d", &ret) != 1) {
@@ -37,7 +37,7 @@ int Right_Sensor_Interface(FILE* file){
     }
     return ret;
 };
-//o
+
 int Dust_Sensor_Interface(FILE* file, int line){
     int i, ret;
     for(i = 1; i < line; i++){
@@ -49,7 +49,7 @@ int Dust_Sensor_Interface(FILE* file, int line){
     return ret;
 };
 
-//o
+
 int Determine_Obstacle_Location(FILE *file, int line){
     Front_Obstacle = Front_Sensor_Interface(file, line);
     Left_Obstacle = Left_Sensor_Interface(file);
@@ -66,7 +66,7 @@ int Determine_Obstacle_Location(FILE *file, int line){
         if(Front_Obstacle && Left_Obstacle && Right_Obstacle) return MOVE_BACKWARD;  // MOVEBACKWARD
     }
 }
-//o
+
     int Determine_Dust_Existence(FILE* file, int line) {
     return Dust_Sensor_Interface(file, line);
 }
