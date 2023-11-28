@@ -28,15 +28,19 @@ int main() {
     int dust_line=0;
 
     while(1){
-        obstacle_line = (int)(rand() % 8) + 1; //1~8
+        if(Prev_Moter_Command == TURN_LEFT || Prev_Moter_Command == TURN_RIGHT){
+            while((obstacle_line = (int)(rand() % 8) + 1) > 4); // 5~8
+        }else if(Prev_Moter_Command == MOVE_BACKWARD){
+            while((obstacle_line = (int)(rand() % 8) + 1) <= 4); //1~4
+        }else (obstacle_line = (int)(rand() % 8) + 1); // 1~8
+
         dust_line = (int)(rand() % 2) + 1; //1~2
         printf("\nPrev_Moter_Command : %d\n",Prev_Moter_Command);
 
         Controller(obstacle_Location_file,dust_Location_file,&moterStatus, &cleanerStatus,obstacle_line,dust_line);
-        //Prev_Moter_Command
-
         printf("Front,Left,Right Obstacle : %d%d%d -> Obstacle_Location : %d , Dust_Existence : %d \n",
-               Front_Obstacle,Left_Obstacle,Right_Obstacle,Obstacle_Location,Dust_Existence);
+                   Front_Obstacle,Left_Obstacle,Right_Obstacle,Obstacle_Location,Dust_Existence);
+
         printf("\nController -> \n");
         printf("Moter_Interface -> MOVE_FORWARD : %d, MOVE_BACKWARD : %d, TURN : %d\n",moterStatus.MoveForward,moterStatus.MoveBackward,moterStatus.Turn);
         printf("Cleaner_Interface -> POWER : %d\n",cleanerStatus.Power);

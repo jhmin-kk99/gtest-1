@@ -142,14 +142,14 @@ void Cleaner_Interface(int command, struct Cleaner_Status *cleanerStatus){
 };
 
 int Moter_Control(int Obstacle_Location, int Dust_Existence, struct Moter_Status *moterStatus){
-    if(Dust_Existence) {
-        Move_Forward(DISABLE,moterStatus);
-        Prev_Moter_Command = MOVE_FORWARD;
-        return MOVE_FORWARD_DISABLE;
-    }
     switch (Obstacle_Location)
     {
         case MOVE_FORWARD:
+            if(Dust_Existence){
+                Move_Forward(DISABLE,moterStatus);
+                Prev_Moter_Command = MOVE_FORWARD;
+                return MOVE_FORWARD_DISABLE;
+            }
             Move_Forward(ENABLE, moterStatus);
             Prev_Moter_Command = MOVE_FORWARD;
             return MOVE_FORWARD;

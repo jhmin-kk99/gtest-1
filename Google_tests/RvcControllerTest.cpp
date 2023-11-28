@@ -21,6 +21,7 @@ protected:
         const char* Dust_Exist_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
         obstacle_file = fopen(Obstacle_Location_File, "r");
         dust_file = fopen(Dust_Exist_File, "r");
+        Prev_Moter_Command = -1;
     }
 
     virtual void TearDown() {
@@ -343,7 +344,7 @@ class MyTestFixture2 : public ::testing::Test {
 
 protected:
     virtual void SetUp(){
-
+        Prev_Moter_Command = -1;
     }
     virtual void TearDown() {
 
@@ -363,7 +364,7 @@ TEST_F(MyTestFixture2, Controller_1){
 
 }
 
-TEST_F(MyTestFixture2, run_2){
+TEST_F(MyTestFixture2, Controller_2){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
@@ -373,16 +374,17 @@ TEST_F(MyTestFixture2, run_2){
     // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
+    //Prev_Moter_Command == TURN_LEFT
+
     Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
-    // 011 / 1
+    // 직진 / 1
     EXPECT_EQ(Dust_Existence,true);
-    EXPECT_EQ(Obstacle_Location, MOVE_FORWARD);
     EXPECT_EQ(Prev_Moter_Command, MOVE_FORWARD);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
 
 }
-TEST_F(MyTestFixture2, run_3){
+TEST_F(MyTestFixture2, Controller_3){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
@@ -392,10 +394,10 @@ TEST_F(MyTestFixture2, run_3){
     // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
+    //Prev_Moter_Command == TURN_LEFT
     Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
-    // 011 / 1
+    // 직진 / 1
     EXPECT_EQ(Dust_Existence,true);
-    EXPECT_EQ(Obstacle_Location, MOVE_FORWARD);
     EXPECT_EQ(Prev_Moter_Command, MOVE_FORWARD);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
@@ -409,10 +411,11 @@ TEST_F(MyTestFixture2, run_3){
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 7,1);
-    // 110 / 0
-    EXPECT_EQ(moterStatus.Turn,TURN_RIGHT);
-    EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
+    //Prev_Moter_Command == TURN_LEFT
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 0,1);
+    // 직진 / 0
+    EXPECT_EQ(moterStatus.MoveForward, MOVE_FORWARD);
+    EXPECT_EQ(cleanerStatus.Power, POWER_ON);
 }
 
 int main(int argc, char **argv) {
