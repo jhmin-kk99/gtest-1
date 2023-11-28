@@ -23,6 +23,7 @@ struct Moter_Status {
 struct Cleaner_Status {
     int Power;
 };
+
 int Front_Sensor_Interface(FILE* file, int line);
 int Left_Sensor_Interface(FILE* file);
 int Right_Sensor_Interface(FILE* file);
@@ -44,7 +45,7 @@ int Determine_Obstacle_Location(FILE* file,int line);
 int Determine_Dust_Existence(FILE* file, int line);
 int Moter_Control(int Obstacle_Location, int Dust_Existence, struct Moter_Status *moterStatus);
 int Cleaner_Control(int Obstacle_Location, int Dust_Existence, struct Cleaner_Status *cleanStatus);
-void run(const char* Obstacle_file, const char* Dust_file,struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line);
+void Controller(const char* Obstacle_file, const char* Dust_file,struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line);
 
 #ifdef __cplusplus
 }

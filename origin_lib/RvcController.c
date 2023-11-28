@@ -10,11 +10,6 @@ int Dust_Existence;
 int Moter_Command, Cleaner_Command;
 
 
-//파일 절대경로
-const char* obstacle_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
-const char* dust_Location_file = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
-
-
 //o
 int Front_Sensor_Interface(FILE* file, int line){
     int i, ret;
@@ -77,6 +72,7 @@ int Determine_Obstacle_Location(FILE *file, int line){
 }
 
 void Move_Forward(int Enable_Or_Disable, struct Moter_Status *moterStatus){
+    //command가 생기고, command로 interface 부름
     if(Enable_Or_Disable == ENABLE) Moter_Command = MOVE_FORWARD;
     else Moter_Command = MOVE_FORWARD_DISABLE;
     Moter_Interface(Moter_Command, moterStatus);
@@ -109,6 +105,7 @@ void Power_Up(struct Cleaner_Status *cleanerStatus){
 };
 
 void Moter_Interface(int command, struct Moter_Status *moterStatus){
+    // 더이상 함수를 부르지 않음 (맨 마지막) , status를 바꿔줌으로써 동작을 함
     switch (command) {
         case MOVE_FORWARD:
             moterStatus->MoveForward = MOVE_FORWARD;
@@ -208,7 +205,7 @@ int Cleaner_Control(int Obstacle_Location, int Dust_Existence, struct Cleaner_St
 }
 
 //Iteration 1번 제대로 동작하는지
-void run(const char* Obstacle_file, const char* Dust_file, struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line){
+void Controller(const char* Obstacle_file, const char* Dust_file, struct Moter_Status *moterStatus, struct Cleaner_Status *cleanerStatus, int Obstacle_line, int Dust_line){
 
     FILE* Obstacle_Location_File = fopen(Obstacle_file, "r");
     FILE* Dust_Exist_File = fopen(Dust_file, "r");

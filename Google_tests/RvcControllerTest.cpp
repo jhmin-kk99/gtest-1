@@ -345,12 +345,12 @@ TEST_F(MyTestFixture, Cleaner_Control_3){
     EXPECT_EQ(cleanerStatus.Power,POWER_OFF);
     //Power Interface를 잘 호출하는지
 }
-TEST(Simulation, run_1){
+TEST(Simulation, Controller_1){
     struct Moter_Status moterStatus;
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
     const char* Dust_Exist_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
     // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
@@ -363,11 +363,11 @@ TEST(Simulation, run_2){
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
     const char* Dust_Exist_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
 
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
     // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
     // 011 / 1
     EXPECT_EQ(Dust_Existence,true);
     EXPECT_EQ(Obstacle_Location, MOVE_FORWARD);
@@ -382,28 +382,28 @@ TEST(Simulation, run_3){
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
     const char* Dust_Exist_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
 
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
     // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
     // 011 / 1
     EXPECT_EQ(Dust_Existence,true);
     EXPECT_EQ(Obstacle_Location, MOVE_FORWARD);
     EXPECT_EQ(Prev_Moter_Command, MOVE_FORWARD);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,1);
     // 011 / 0
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD);
     EXPECT_EQ(cleanerStatus.Power, POWER_ON);
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 6,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 6,1);
     // 101 / 0
     EXPECT_EQ(Obstacle_Location, TURN_LEFT);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
-    run(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 7,1);
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 7,1);
     // 110 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_RIGHT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
