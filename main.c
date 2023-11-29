@@ -30,8 +30,10 @@ int main() {
     while(1){
         if(Prev_Moter_Command == TURN_LEFT || Prev_Moter_Command == TURN_RIGHT){
             while((obstacle_line = (int)(rand() % 8) + 1) > 4); // 5~8
+            // 좌,우회전을 한다면, 더이상 후진을 하지 않을 때까지 적당히 후진 한다고 가정
         }else if(Prev_Moter_Command == MOVE_BACKWARD){
-            while((obstacle_line = (int)(rand() % 8) + 1) <= 4); //1~4
+            while((obstacle_line = (int)(rand() % 8) + 1) == 8); // 1~7
+            // 후진을 한다면, 더이상 후진을 하지 않을 때까지 적당히 후진 한다고 가정
         }else (obstacle_line = (int)(rand() % 8) + 1); // 1~8
 
         dust_line = (int)(rand() % 2) + 1; //1~2

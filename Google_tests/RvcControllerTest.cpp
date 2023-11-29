@@ -15,6 +15,9 @@ extern int Moter_Command, Cleaner_Command;
 class MyTestFixture : public ::testing::Test {
 
 protected:
+    MyTestFixture(){
+
+    }
     virtual void SetUp()
     {
         const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
@@ -28,7 +31,9 @@ protected:
         fclose(obstacle_file);
         fclose(dust_file);
     }
+    ~MyTestFixture(){
 
+    }
     FILE * obstacle_file;
     FILE * dust_file;
 };
@@ -36,25 +41,45 @@ protected:
 TEST_F(MyTestFixture, Front_Sensor_Interface_1){
     //전방에 장애물이 있는 경우
     int line_num = 5;
-    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, line_num), 1);
+    int ret = Front_Sensor_Interface(obstacle_file, line_num);
+    EXPECT_EQ(ret, 1);
+    EXPECT_FALSE(ret == 2);
+    EXPECT_FALSE(ret == -5);
+    EXPECT_FALSE(ret == 10);
+
 }
 TEST_F(MyTestFixture, Front_Sensor_Interface_2){
     //전방에 장애물이 없는 경우
     int line_num = 1;
-    EXPECT_EQ(Front_Sensor_Interface(obstacle_file, line_num), 0);
+    int ret = Front_Sensor_Interface(obstacle_file, line_num);
+    EXPECT_EQ(ret, 0);
+    EXPECT_FALSE(ret == 1);
+    EXPECT_FALSE(ret == -1);
+    EXPECT_FALSE(ret == 5);
 }
 
 TEST_F(MyTestFixture, Left_Sensor_Interface_1){
     //좌측에 장애물이 있는 경우
     int line_num = 3;
     Front_Sensor_Interface(obstacle_file, line_num);
-    EXPECT_EQ(Left_Sensor_Interface(obstacle_file), 1);
+    int ret = Left_Sensor_Interface(obstacle_file);
+    EXPECT_EQ(ret, 1);
+    EXPECT_FALSE(ret==2);
+    EXPECT_FALSE(ret==3);
+    EXPECT_FALSE(ret==-1);
+    EXPECT_FALSE(ret==0);
+    EXPECT_FALSE(ret==5);
 }
 TEST_F(MyTestFixture, Left_Sensor_Interface_2){
     //좌측에 장애물이 없는 경우
     int line_num = 2;
     Front_Sensor_Interface(obstacle_file, line_num);
-    EXPECT_EQ(Left_Sensor_Interface(obstacle_file), 0);
+    int ret = Left_Sensor_Interface(obstacle_file);
+    EXPECT_EQ(ret, 0);
+    EXPECT_FALSE(ret==2);
+    EXPECT_FALSE(ret==3);
+    EXPECT_FALSE(ret==-1);
+    EXPECT_FALSE(ret==5);
 }
 
 TEST_F(MyTestFixture, Right_Sensor_Interface_1){
@@ -62,7 +87,11 @@ TEST_F(MyTestFixture, Right_Sensor_Interface_1){
     int line_num = 2;
     Front_Sensor_Interface(obstacle_file, line_num);
     Left_Sensor_Interface(obstacle_file);
-    EXPECT_EQ(Right_Sensor_Interface(obstacle_file), 1);
+    int ret = Right_Sensor_Interface(obstacle_file);
+    EXPECT_EQ(ret, 1);
+    EXPECT_FALSE(ret==3);
+    EXPECT_FALSE(ret==-1);
+    EXPECT_FALSE(ret==5);
 }
 
 TEST_F(MyTestFixture,Right_Sensor_Interface_2){
@@ -70,7 +99,11 @@ TEST_F(MyTestFixture,Right_Sensor_Interface_2){
     int line_num = 3;
     Front_Sensor_Interface(obstacle_file, line_num);
     Left_Sensor_Interface(obstacle_file);
-    EXPECT_EQ(Right_Sensor_Interface(obstacle_file), 0);
+    int ret = Right_Sensor_Interface(obstacle_file);
+    EXPECT_EQ(ret, 0);
+    EXPECT_FALSE(ret==3);
+    EXPECT_FALSE(ret==-1);
+    EXPECT_FALSE(ret==5);
 }
 
 TEST_F(MyTestFixture, Determine_Obstacle_Location_1){
@@ -165,10 +198,13 @@ TEST_F(MyTestFixture, Determine_Obstacle_Location_15){
     EXPECT_EQ(Determine_Obstacle_Location(obstacle_file, line_num), TURN_RIGHT);
 }
 TEST_F(MyTestFixture, Determine_Obstacle_Location_16){
-    // 후진하던 중, obstacle (front, left, right) : (1, 1, 1)인 경우
-    int line_num = 8;
-    Prev_Moter_Command = MOVE_BACKWARD;
-    EXPECT_EQ(Determine_Obstacle_Location(obstacle_file,line_num), MOVE_BACKWARD);
+    // 이전 command가 좌회전이고, obstacle (front, left, right) : (0, 1, 1)인 경우
+    int line_num = 4;
+    Prev_Moter_Command = TURN_LEFT;
+    int ret = Determine_Obstacle_Location(obstacle_file,line_num);
+    EXPECT_EQ(ret, MOVE_FORWARD);
+    EXPECT_FALSE(ret == MOVE_BACKWARD);
+    EXPECT_FALSE(ret == -1);
 }
 
 TEST_F(MyTestFixture, Moter_Interface_1){
@@ -176,6 +212,9 @@ TEST_F(MyTestFixture, Moter_Interface_1){
     int command = MOVE_FORWARD;
     Moter_Interface(command, &moterStatus);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD);
+    EXPECT_FALSE(moterStatus.Turn == TURN_LEFT);
+    EXPECT_FALSE(moterStatus.MoveForward == MOVE_FORWARD_DISABLE);
+    EXPECT_FALSE(moterStatus.MoveForward == -1);
 }
 
 TEST_F(MyTestFixture, Moter_Interface_2){
@@ -183,14 +222,20 @@ TEST_F(MyTestFixture, Moter_Interface_2){
     int command = MOVE_FORWARD_DISABLE;
     Moter_Interface(command, &moterStatus);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
+    EXPECT_FALSE(moterStatus.Turn == TURN_LEFT);
+    EXPECT_FALSE(moterStatus.MoveForward == MOVE_FORWARD);
+    EXPECT_FALSE(moterStatus.MoveBackward == MOVE_BACKWARD_DISABLE);
 }
 // 전진과 후진 로직이 거의 같으므로 전진만 test함.
 
-TEST_F(MyTestFixture, Moter_Interface_5){
+TEST_F(MyTestFixture, Moter_Interface_3){
     struct Moter_Status moterStatus;
     int command = TURN_LEFT;
     Moter_Interface(command, &moterStatus);
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
+    EXPECT_FALSE(moterStatus.Turn == TURN_RIGHT);
+    EXPECT_FALSE(moterStatus.MoveForward == MOVE_FORWARD);
+    EXPECT_FALSE(moterStatus.MoveBackward == MOVE_BACKWARD_DISABLE);
 }
 // 좌,우 로직이 거의 같으므로 좌만 test함.
 
@@ -199,11 +244,14 @@ TEST_F(MyTestFixture, Cleaner_Interface_1){
     int command = POWER_ON;
     Cleaner_Interface(command, &cleanerStatus);
     EXPECT_EQ(cleanerStatus.Power,POWER_ON);
+    EXPECT_FALSE(cleanerStatus.Power == POWER_UP);
+    EXPECT_FALSE(cleanerStatus.Power == POWER_OFF);
+
 }
 // POWER ON,UP,OFF 로직이 거의 같으므로 ON만 test함.
 
 
-TEST_F(MyTestFixture, MOVE_FORWARD_1){
+TEST_F(MyTestFixture, Move_Forward_1){
     struct Moter_Status moterStatus;
     Move_Forward(ENABLE,&moterStatus);
     EXPECT_EQ(Moter_Command,MOVE_FORWARD);
@@ -212,8 +260,7 @@ TEST_F(MyTestFixture, MOVE_FORWARD_1){
     //Moter Interface를 잘 호출하는지
 }
 
-
-TEST_F(MyTestFixture, MOVE_BACKWARD_2){
+TEST_F(MyTestFixture, Move_Backward_1){
     struct Moter_Status moterStatus;
     Move_Backward(DISABLE,&moterStatus);
     EXPECT_EQ(Moter_Command,MOVE_BACKWARD_DISABLE);
@@ -221,7 +268,7 @@ TEST_F(MyTestFixture, MOVE_BACKWARD_2){
     EXPECT_EQ(moterStatus.MoveBackward,MOVE_BACKWARD_DISABLE);
     //Moter Interface를 잘 호출하는지
 }
-TEST_F(MyTestFixture, TURN_LEFT_1){
+TEST_F(MyTestFixture, Turn_Left_1){
     struct Moter_Status moterStatus;
     Turn_Left(&moterStatus);
     EXPECT_EQ(Moter_Command,TURN_LEFT);
@@ -230,7 +277,7 @@ TEST_F(MyTestFixture, TURN_LEFT_1){
     //Moter Interface를 잘 호출하는지
 }
 
-TEST_F(MyTestFixture, POWER_UP_1){
+TEST_F(MyTestFixture, Power_Up_1){
     struct Cleaner_Status cleanerStatus;
     Power_Up(&cleanerStatus);
     EXPECT_EQ(Cleaner_Command,POWER_UP);
@@ -238,13 +285,6 @@ TEST_F(MyTestFixture, POWER_UP_1){
     EXPECT_EQ(cleanerStatus.Power,POWER_UP);
     //Cleaner Interface를 잘 호출하는지
 }
-
-/**
-    struct Moter_Status moterStatus;
-    Dust_Existence = true;
-    Obstacle_Location = MOVE_FORWARD;
-    Prev_Moter_Command = MOVE_FORWARD;
- */
 
 TEST_F(MyTestFixture, Moter_Control_1){
     struct Moter_Status moterStatus;
@@ -314,6 +354,8 @@ TEST_F(MyTestFixture, Cleaner_Control_1){
 
     EXPECT_EQ(Cleaner_Control(Obstacle_Location,Dust_Existence,&cleanerStatus),POWER_ON);
     //return값
+    EXPECT_EQ(Cleaner_Command,POWER_ON);
+    // command가 잘 작동하는지
     EXPECT_EQ(cleanerStatus.Power,POWER_ON);
     //Power Interface를 잘 호출하는지
 }
@@ -324,6 +366,8 @@ TEST_F(MyTestFixture, Cleaner_Control_2){
 
     EXPECT_EQ(Cleaner_Control(Obstacle_Location,Dust_Existence,&cleanerStatus),POWER_UP);
     //return값
+    EXPECT_EQ(Cleaner_Command,POWER_UP);
+    // command가 잘 작동하는지
     EXPECT_EQ(cleanerStatus.Power,POWER_UP);
     //Power Interface를 잘 호출하는지
 }
@@ -343,10 +387,16 @@ TEST_F(MyTestFixture, Cleaner_Control_3){
 class MyTestFixture2 : public ::testing::Test {
 
 protected:
+    MyTestFixture2(){
+
+    }
     virtual void SetUp(){
         Prev_Moter_Command = -1;
     }
     virtual void TearDown() {
+
+    }
+    ~MyTestFixture2(){
 
     }
 };
@@ -389,31 +439,25 @@ TEST_F(MyTestFixture2, Controller_3){
     struct Cleaner_Status cleanerStatus;
     const char* Obstacle_Location_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\obstacle.txt";
     const char* Dust_Exist_File = "C:\\Users\\user\\CLionProjects\\gtest-1\\Google_tests\\dust.txt";
-
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1);
-    // 100 / 0
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 5,1); // 100 / 0
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
     //Prev_Moter_Command == TURN_LEFT
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2);
-    // 직진 / 1
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,2); // 직진 / 1
     EXPECT_EQ(Dust_Existence,true);
     EXPECT_EQ(Prev_Moter_Command, MOVE_FORWARD);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(cleanerStatus.Power, POWER_UP);
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,1);
-    // 011 / 0
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 4,1); // 011 / 0
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD);
     EXPECT_EQ(cleanerStatus.Power, POWER_ON);
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 6,1);
-    // 101 / 0
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 6,1); // 101 / 0
     EXPECT_EQ(Obstacle_Location, TURN_LEFT);
     EXPECT_EQ(moterStatus.MoveForward,MOVE_FORWARD_DISABLE);
     EXPECT_EQ(moterStatus.Turn,TURN_LEFT);
     EXPECT_EQ(cleanerStatus.Power, POWER_OFF);
     //Prev_Moter_Command == TURN_LEFT
-    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 0,1);
-    // 직진 / 0
+    Controller(Obstacle_Location_File,Dust_Exist_File,&moterStatus, &cleanerStatus, 0,1); // 직진 / 0
     EXPECT_EQ(moterStatus.MoveForward, MOVE_FORWARD);
     EXPECT_EQ(cleanerStatus.Power, POWER_ON);
 }
